@@ -1,0 +1,46 @@
+{
+  "id": "9b1508ac-3a8e-46ed-9c4f-ea1041a8dd52",
+  "object": "chat.completion",
+  "created": 1770040262,
+  "model": "deepseek-chat",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "今天是 **2026 年 2 月 2 日**，我们来计算一下距离春节还有几天。  \n\n**1. 确定 2026 年春节的日期**  \n春节（农历正月初一）在公历的日期每年不同。  \n查日历可知：  \n- 2026 年春节是 **2 月 17 日**（星期二）。  \n\n**2. 计算天数差**  \n从 2 月 2 日到 2 月 17 日：  \n\\[\n17 - 2 = 15 \\text{ 天}\n\\]  \n\n**3. 结论**  \n因此，距离 2026 年春节还有 **15 天**。"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 17,
+    "completion_tokens": 151,
+    "total_tokens": 168,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 17
+  },
+  "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache"
+},
+
+{
+  "id": "aeafabae-011d-4c64-b7c2-f0eb0cfa7dc7",
+  "object": "chat.completion.chunk",
+  "created": 1770041448,
+  "model": "deepseek-chat",
+  "system_fingerprint": "fp_eaab8d114b_prod0820_fp8_kvcache",
+  "choices": [
+    {
+      "index": 0,
+      "delta": {
+        "content": "。"
+      },
+      "logprobs": null,
+      "finish_reason": null
+    }
+  ]
+}
