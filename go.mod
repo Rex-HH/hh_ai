@@ -10,6 +10,7 @@ require (
 	github.com/cloudwego/eino-ext/components/tool/mcp v0.0.8
 	github.com/mark3labs/mcp-go v0.43.2
 	github.com/modelcontextprotocol/go-sdk v1.2.0
+	github.com/rs/xid v1.6.0
 )
 
 require (
