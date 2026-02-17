@@ -23,3 +23,7 @@ func processData(data []int) []int {
 }`
 	LoopAgent(code)
 }
+
+func TestParallelAgent(t *testing.T) {
+	ParallelAgent()
+}
