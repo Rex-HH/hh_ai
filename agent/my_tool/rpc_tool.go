@@ -72,7 +72,7 @@ func GetMyLocation() (*Location, error) {
 	}
 	if location.Status != "1" {
 		log.Printf("GetMyLocation status: %s", location.Status)
-		return nil, fmt.Errorf("GetMyLocation failed, status is: %s", location.Status)
+		return nil, fmt.Errorf("   %s", location.Status)
 	}
 	return &location, nil
 }
