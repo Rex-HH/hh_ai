@@ -44,7 +44,8 @@ func SearchAgent() {
 		EnableStreaming: false,
 		Agent:           agent,
 	})
-	iter := runner.Query(ctx, "海淀高中前三强")
+	//iter := runner.Query(ctx, "海淀高中前三强")
+	iter := runner.Query(ctx, "黑龙江省计算机专业最强的三所大学")
 
 	var lastmsg adk.Message
 	for {

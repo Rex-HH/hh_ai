@@ -32,8 +32,13 @@ func GetBrowser() *core.Browser {
 }
 
 func CloseBrowser() {
-	// 关闭浏览器
+	// 关闭浏览器时增加 panic 保护，避免底层 rod 在重复关闭或部分初始化失败时触发 nil pointer panic
 	if browser != nil {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("recover from browser.Close panic: %v", r)
+			}
+		}()
 		browser.Close()
 	}
 }
