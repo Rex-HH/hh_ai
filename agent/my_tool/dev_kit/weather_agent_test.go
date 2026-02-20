@@ -1,6 +1,9 @@
 package dev_kit
 
-import "testing"
+import (
+	"hh_ai/agent/my_tool"
+	"testing"
+)
 
 func TestWeatherAgent(t *testing.T) {
 	WeatherAgent()
@@ -26,4 +29,9 @@ func processData(data []int) []int {
 
 func TestParallelAgent(t *testing.T) {
 	ParallelAgent()
+}
+
+func TestSearchAgent(t *testing.T) {
+	defer my_tool.CloseBrowser()
+	SearchAgent()
 }
