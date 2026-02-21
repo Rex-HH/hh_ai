@@ -35,3 +35,7 @@ func TestSearchAgent(t *testing.T) {
 	defer my_tool.CloseBrowser()
 	SearchAgent()
 }
+
+func TestTripAgent(t *testing.T) {
+	TripAgent()
+}

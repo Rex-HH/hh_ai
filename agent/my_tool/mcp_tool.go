@@ -83,7 +83,7 @@ func Use12306Tool() {
 	}
 	ticketTool := tools[0].(tool.InvokableTool)
 	getTicketsRequest := GetTicketsRequest{
-		Date:        "2026-02-09",
+		Date:        "2026-02-22",
 		FromStation: "SJP",
 		ToStation:   "VAB",
 	}
