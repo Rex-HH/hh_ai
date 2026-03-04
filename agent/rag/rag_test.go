@@ -34,3 +34,7 @@ func TestLoadDocument(t *testing.T) {
 func TestTransformDocument(t *testing.T) {
 	TransformDocument("../../data/qa.md")
 }
+
+func TestWrodSim(t *testing.T) {
+	WrodSim()
+}

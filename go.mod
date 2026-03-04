@@ -11,6 +11,7 @@ require (
 	github.com/cloudwego/eino-ext/components/document/parser/pdf v0.0.0-20260302070227-13ce9b3fa975
 	github.com/cloudwego/eino-ext/components/document/parser/xlsx v0.0.0-20260302070227-13ce9b3fa975
 	github.com/cloudwego/eino-ext/components/document/transformer/splitter/markdown v0.0.0-20260302070227-13ce9b3fa975
+	github.com/cloudwego/eino-ext/components/embedding/ark v0.1.1
 	github.com/cloudwego/eino-ext/components/model/ark v0.1.64
 	github.com/cloudwego/eino-ext/components/model/deepseek v0.1.2
 	github.com/cloudwego/eino-ext/components/tool/mcp v0.0.8
@@ -88,6 +89,7 @@ require (
 	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa // indirect
 	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
+	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
