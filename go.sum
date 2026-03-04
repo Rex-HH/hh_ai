@@ -47,6 +47,8 @@ github.com/cloudwego/eino-ext/components/document/parser/xlsx v0.0.0-20260302070
 github.com/cloudwego/eino-ext/components/document/parser/xlsx v0.0.0-20260302070227-13ce9b3fa975/go.mod h1:7aF6WcOvowbYaXUnDY+awRZJ29LHP+4oWhS5ogH36bE=
 github.com/cloudwego/eino-ext/components/document/transformer/splitter/markdown v0.0.0-20260302070227-13ce9b3fa975 h1:ma4Nyn0ejITmbBJedgVt8M15mmvvEyS/FAtYaXFO6EY=
 github.com/cloudwego/eino-ext/components/document/transformer/splitter/markdown v0.0.0-20260302070227-13ce9b3fa975/go.mod h1:KVOVct4e2BQ7epDONW2QE1qU5+ccoh91FzJTs9vIJj0=
+github.com/cloudwego/eino-ext/components/embedding/ark v0.1.1 h1:PM/+XAvJtrBqFlBY15ws0pb0+92XKHQv0ei3M7PIJcQ=
+github.com/cloudwego/eino-ext/components/embedding/ark v0.1.1/go.mod h1:6O6x0fHfM3uCLr3lX1DnB/my7fC3WRUA5hpkCkrkZrg=
 github.com/cloudwego/eino-ext/components/model/ark v0.1.64 h1:ecsP4xWhOGi6NYxl2NOemEoTNpNuLT7ING8gOZ7CArI=
 github.com/cloudwego/eino-ext/components/model/ark v0.1.64/go.mod h1:aabMR15RTXBSi9Eu13CWavzE+no5BQO4FJUEEdqImbg=
 github.com/cloudwego/eino-ext/components/model/deepseek v0.1.2 h1:PSHIDLUOv3ZCO7G6ZXnuJWb5pvRZV6xnfLLbwbfY704=
@@ -323,6 +325,8 @@ golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
 golang.org/x/sync v0.6.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
 golang.org/x/sync v0.7.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
 golang.org/x/sync v0.10.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
+golang.org/x/sync v0.16.0 h1:ycBJEhp9p4vXvUZNszeOq0kGTPghopOL8q0fq3vstxw=
+golang.org/x/sync v0.16.0/go.mod h1:1dzgHSNfp02xaA81J2MS99Qcpr2w7fw1gpm99rleRqA=
 golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
