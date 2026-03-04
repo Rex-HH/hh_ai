@@ -18,6 +18,10 @@ var (
 	embedderOnce sync.Once
 )
 
+const (
+	VECTOR_DIM = 2048
+)
+
 func GetEmbedder() *ark.Embedder {
 	embedderOnce.Do(func() {
 		ctx := context.Background()

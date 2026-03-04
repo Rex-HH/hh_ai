@@ -38,3 +38,7 @@ func TestTransformDocument(t *testing.T) {
 func TestWrodSim(t *testing.T) {
 	WrodSim()
 }
+
+func TestSearchByVector(t *testing.T) {
+	SearchByVector()
+}
