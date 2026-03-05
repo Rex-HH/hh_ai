@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/bytedance/sonic"
 )
 
 func TestParseDocument(t *testing.T) {
@@ -41,4 +43,21 @@ func TestWrodSim(t *testing.T) {
 
 func TestSearchByVector(t *testing.T) {
 	SearchByVector()
+}
+
+func TestRetrieveDocument(t *testing.T) {
+	IndexDocument("../../data/qa.md")
+	docs := RetrieveDocument("在美国，一个企业雇一个员工，医疗和社会保障方面的支出有多少？", 4)
+	for _, doc := range docs {
+		s, _ := sonic.MarshalString(doc)
+		fmt.Println(s)
+	}
+	GetQdrantClient().Close()
+}
+
+func TestChatBot(t *testing.T) {
+	IndexDocument("../../data/qa.md")
+	answer := ChatBot("在美国，一个企业雇一个员工，医疗和社会保障方面的支出有多少？")
+	fmt.Println(answer)
+	GetQdrantClient().Close()
 }
