@@ -15,3 +15,6 @@ func TestGraphWithState(t *testing.T) {
 	GraphWithState("hello, how are you")
 	GraphWithState("hello, how are you!")
 }
+func TestGraphOfChain(t *testing.T) {
+	GraphOfChain()
+}
