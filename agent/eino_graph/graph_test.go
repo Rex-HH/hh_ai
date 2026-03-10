@@ -18,3 +18,7 @@ func TestGraphWithState(t *testing.T) {
 func TestGraphOfChain(t *testing.T) {
 	GraphOfChain()
 }
+
+func TestGraphOfReact(t *testing.T) {
+	GraphOfReact()
+}
