@@ -127,9 +127,18 @@ func Crawl(ctx context.Context, url *Url) (string, error) {
 	if url.Url == "" {
 		return "", errors.New("没有指定爬取的URL")
 	}
-	page, err := GetBrowser().Navigate(url.Url)
+	b := GetBrowser()
+	page, err := b.Navigate(url.Url)
 	if err != nil {
 		return "", err
+	}
+	if !b.LeavePageOpen {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("recover from page.Close panic: %v", r)
+			}
+			_ = page.Close()
+		}()
 	}
 	element, _ := page.Element("title")
 	title, _ := element.Text()

@@ -17,6 +17,7 @@ require (
 	github.com/cloudwego/eino-ext/components/model/deepseek v0.1.2
 	github.com/cloudwego/eino-ext/components/retriever/qdrant v0.0.0-20260302070227-13ce9b3fa975
 	github.com/cloudwego/eino-ext/components/tool/mcp v0.0.8
+	github.com/google/uuid v1.6.0
 	github.com/karust/openserp v0.5.4
 	github.com/mark3labs/mcp-go v0.43.2
 	github.com/modelcontextprotocol/go-sdk v1.2.0
@@ -44,7 +45,6 @@ require (
 	github.com/go-rod/stealth v0.4.9 // indirect
 	github.com/gofiber/fiber/v2 v2.52.11-0.20251210115302-eb874b6f6c58 // indirect
 	github.com/google/jsonschema-go v0.3.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/goph/emperror v0.17.2 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/invopop/jsonschema v0.13.0 // indirect
