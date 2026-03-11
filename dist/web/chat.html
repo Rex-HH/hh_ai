@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f7fb; color: #1f2937; }
+        .app { width: min(1400px, 96vw); margin: 12px auto; height: calc(100vh - 24px); display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; overflow: hidden; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08); }
+        .header { padding: 16px 20px; background: #111827; color: #fff; font-weight: 600; }
+        .chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .msg { max-width: 86%; padding: 12px 14px; border-radius: 14px; line-height: 1.6; word-break: break-word; }
+        .msg h1, .msg h2, .msg h3, .msg h4, .msg h5, .msg h6 { margin: 0.6em 0 0.35em; line-height: 1.25; }
+        .msg h1 { font-size: 22px; }
+        .msg h2 { font-size: 20px; }
+        .msg h3 { font-size: 18px; }
+        .msg h4 { font-size: 16px; }
+        .msg h5 { font-size: 15px; }
+        .msg h6 { font-size: 14px; }
+        .msg p { margin: 0.5em 0; }
+        .msg p:first-child { margin-top: 0; }
+        .msg p:last-child { margin-bottom: 0; }
+        .msg pre { margin: 0.6em 0; padding: 12px; background: #0b1020; color: #e5e7eb; border-radius: 10px; overflow-x: auto; }
+        .msg code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 13px; }
+        .msg ul, .msg ol { margin: 0.4em 0 0.4em 1.2em; padding: 0; }
+        .msg li { margin: 0.15em 0; }
+        .msg strong { font-weight: 700; }
+        .user { align-self: flex-end; background: #2563eb; color: #fff; border-bottom-right-radius: 4px; white-space: pre-wrap; }
+        .assistant { align-self: flex-start; background: #fff; color: #111827; border: 1px solid #e5e7eb; border-bottom-left-radius: 4px; }
+        .thinking { align-self: flex-start; background: #fff; border: 1px solid #e5e7eb; border-bottom-left-radius: 4px; padding: 10px 12px; display: none; align-items: center; gap: 10px; }
+        .spinner { width: 18px; height: 18px; border: 2px solid #d1d5db; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.9s linear infinite; }
+        .dots { display: inline-flex; gap: 4px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: #6b7280; animation: bounce 1.2s infinite ease-in-out; }
+        .dot:nth-child(2) { animation-delay: 0.15s; }
+        .dot:nth-child(3) { animation-delay: 0.3s; }
+        .footer { padding: 14px; background: #fff; border-top: 1px solid #e5e7eb; }
+        .input-row { display: flex; gap: 10px; }
+        #input { flex: 1; resize: none; height: 56px; border: 1px solid #d1d5db; border-radius: 12px; padding: 12px; font-size: 14px; outline: none; }
+        #input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+        #send, #stop { min-width: 96px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        #send { background: #2563eb; color: #fff; }
+        #send:disabled { background: #9ca3af; cursor: not-allowed; }
+        #stop { background: #111827; color: #fff; }
+        #stop:disabled { background: #9ca3af; cursor: not-allowed; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes bounce { 0%,80%,100% { transform: scale(0.5); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+        @media (max-width: 900px) {
+            .app { width: 100vw; margin: 0; height: 100vh; border-radius: 0; border: none; box-shadow: none; }
+            .msg { max-width: 92%; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="header">AI 助手</div>
+    <div id="chat" class="chat"></div>
+    <div class="footer">
+        <div class="input-row">
+            <textarea id="input" placeholder="输入你的问题，Enter 发送，Shift+Enter 换行"></textarea>
+            <button id="stop" disabled>停止</button>
+            <button id="send">发送</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatUrl = "{{.url}}";
+    const sessionId = "{{.session}}";
+    const chatBox = document.getElementById('chat');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
+    const stopBtn = document.getElementById('stop');
+
+    let es = null;
+    let isStreaming = false;
+
+    function escapeHtml(s) {
+        return s
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    function formatInline(md) {
+        let s = escapeHtml(md);
+        s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+        s = s.replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/\*(?!\*)([^*\n]+)\*/g, '<em>$1</em>');
+        return s;
+    }
+
+    function renderMarkdownSafe(text) {
+        const raw = text.replaceAll('\r\n', '\n');
+        const parts = raw.split('```');
+
+        const blocks = [];
+        for (let i = 0; i < parts.length; i++) {
+            if (i % 2 === 0) {
+                blocks.push({ type: 'text', v: parts[i] });
+            } else {
+                blocks.push({ type: 'code', v: parts[i] });
+            }
+        }
+
+        const html = blocks.map((b) => {
+            if (b.type === 'code') {
+                let code = b.v;
+                const firstNl = code.indexOf('\n');
+                if (firstNl !== -1) {
+                    const maybeLang = code.slice(0, firstNl).trim();
+                    if (/^[a-zA-Z0-9_+-]{1,20}$/.test(maybeLang)) {
+                        code = code.slice(firstNl + 1);
+                    }
+                }
+                return `<pre><code>${escapeHtml(code)}</code></pre>`;
+            }
+
+            const lines = b.v.split('\n');
+            let out = '';
+            let inUl = false;
+            let inOl = false;
+
+            function closeLists() {
+                if (inUl) { out += '</ul>'; inUl = false; }
+                if (inOl) { out += '</ol>'; inOl = false; }
+            }
+
+            for (const line of lines) {
+                const hMatch = /^\s*(#{1,6})\s+(.+)$/.exec(line);
+                const boldLineAsTitleMatch = /^\s*\*\*([^*]+)\*\*\s*$/.exec(line);
+                const ulMatch = /^\s*[-*]\s+(.+)$/.exec(line);
+                const olMatch = /^\s*(\d+)\.\s+(.+)$/.exec(line);
+
+                if (hMatch) {
+                    closeLists();
+                    const level = hMatch[1].length;
+                    out += `<h${level}>${formatInline(hMatch[2])}</h${level}>`;
+                    continue;
+                }
+
+                if (boldLineAsTitleMatch) {
+                    closeLists();
+                    out += `<h3>${formatInline(boldLineAsTitleMatch[1])}</h3>`;
+                    continue;
+                }
+
+                if (ulMatch) {
+                    if (!inUl) { closeLists(); out += '<ul>'; inUl = true; }
+                    out += `<li>${formatInline(ulMatch[1])}</li>`;
+                    continue;
+                }
+                if (olMatch) {
+                    if (!inOl) { closeLists(); out += '<ol>'; inOl = true; }
+                    out += `<li>${formatInline(olMatch[2])}</li>`;
+                    continue;
+                }
+
+                closeLists();
+                if (line.trim().length === 0) {
+                    out += '<p></p>';
+                } else {
+                    out += `<p>${formatInline(line)}</p>`;
+                }
+            }
+            closeLists();
+            return out;
+        }).join('');
+
+        return html;
+    }
+
+    function addMessage(role, text) {
+        const el = document.createElement('div');
+        el.className = `msg ${role}`;
+        if (role === 'assistant') {
+            el.innerHTML = renderMarkdownSafe(text);
+        } else {
+            el.textContent = text;
+        }
+        chatBox.appendChild(el);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return el;
+    }
+
+    function addThinking() {
+        const el = document.createElement('div');
+        el.className = 'thinking';
+        el.innerHTML = '<div class="spinner"></div><span>思考中</span><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';
+        el.style.display = 'inline-flex';
+        chatBox.appendChild(el);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return el;
+    }
+
+    function setSending(sending) {
+        isStreaming = sending;
+        sendBtn.disabled = sending;
+        stopBtn.disabled = !sending;
+        input.disabled = sending;
+        sendBtn.textContent = sending ? '发送中...' : '发送';
+    }
+
+    function closeStream() {
+        if (es) {
+            es.close();
+            es = null;
+        }
+    }
+
+    function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
+
+        closeStream();
+        setSending(true);
+        addMessage('user', text);
+        input.value = '';
+
+        const thinking = addThinking();
+        const assistantEl = addMessage('assistant', '');
+        let hasToken = false;
+        let assistantText = '';
+
+        const streamUrl = `${chatUrl}?session=${encodeURIComponent(sessionId)}&msg=${encodeURIComponent(text)}`;
+        es = new EventSource(streamUrl);
+
+        es.onmessage = (event) => {
+            if (event.data === '[DONE]') {
+                closeStream();
+                thinking.remove();
+                setSending(false);
+                input.focus();
+                return;
+            }
+            if (!hasToken) {
+                hasToken = true;
+                thinking.remove();
+            }
+            const chunk = event.data.replaceAll('<br>', '\n');
+            assistantText += chunk;
+            assistantEl.innerHTML = renderMarkdownSafe(assistantText);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+
+        es.onerror = () => {
+            closeStream();
+            thinking.remove();
+            if (!assistantText) {
+                assistantText = '连接中断，请稍后重试。';
+                assistantEl.innerHTML = renderMarkdownSafe(assistantText);
+            }
+            setSending(false);
+            input.focus();
+        };
+    }
+
+    stopBtn.addEventListener('click', () => {
+        if (!isStreaming) return;
+        closeStream();
+        setSending(false);
+        input.focus();
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    input.focus();
+</script>
+</body>
+</html>
