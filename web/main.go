@@ -73,36 +73,46 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		// 非流方式
-		//msg, err := event.Output.MessageOutput.GetMessage() // GetMessage() 会把流式输出的结果全部合并到一起再返回。这样就没有流式的效果了
-		//if err != nil {
-		//	log.Printf("get output message failed: %s", event.Err)
-		//} else {
-		//	if msg != nil && msg.Role == schema.Assistant {
-		//		log.Print(msg.Content)
-		//		answer.WriteString(msg.Content)
-		//		fmt.Fprintf(w, "data: %s\n\n", strings.ReplaceAll(msg.Content, "\n", "<br>")) // SSE 协议要求 数据内部不能包含换行符。此处把\n替换为<br>，在前端代码里还需要把<br>再替换回\n
-		//		flusher.Flush()                                                               // 强制数据立刻发给对方
-		//	}
-		//}
-
+		if event.Output == nil || event.Output.MessageOutput == nil {
+			continue
+		}
 		// 流式
-		s := event.Output.MessageOutput.MessageStream
-		for {
-			msg, err := s.Recv()
-			if err != nil {
-				if err == io.EOF {
+		if s := event.Output.MessageOutput.MessageStream; s != nil {
+			for {
+				select {
+				case <-r.Context().Done():
+					return
+				default:
+				}
+				msg, err := s.Recv()
+				if err != nil {
+					if err == io.EOF {
+						break
+					}
+					log.Printf("get output message failed: %s", err)
 					break
 				}
-				log.Printf("get output message failed: %s", event.Err)
-				break
+				if msg != nil {
+					fmt.Print(msg.Content)
+					answer.WriteString(msg.Content)
+					fmt.Fprintf(w, "data: %s\n\n", strings.ReplaceAll(msg.Content, "\n", "<br>")) // SSE 协议要求 数据内部不能包含换行符。此处把\n替换为<br>，在前端代码里还需要把<br>再替换回\n
+					flusher.Flush()                                                               // 强制数据立刻发给对方
+				}
 			}
-			if msg != nil { // 无法从一个片断中取到 msg.Role
-				fmt.Print(msg.Content)
-				answer.WriteString(msg.Content)
-				fmt.Fprintf(w, "data: %s\n\n", strings.ReplaceAll(msg.Content, "\n", "<br>")) // SSE 协议要求 数据内部不能包含换行符。此处把\n替换为<br>，在前端代码里还需要把<br>再替换回\n
-				flusher.Flush()                                                               // 强制数据立刻发给对方
-			}
+			continue
+		}
+
+		// 非流式（例如 Tool 的输出，或某些组件天然不支持流式）
+		msg, err := event.Output.MessageOutput.GetMessage()
+		if err != nil {
+			log.Printf("get output message failed: %s", err)
+			continue
+		}
+		if msg != nil && msg.Role == schema.Assistant {
+			fmt.Print(msg.Content)
+			answer.WriteString(msg.Content)
+			fmt.Fprintf(w, "data: %s\n\n", strings.ReplaceAll(msg.Content, "\n", "<br>"))
+			flusher.Flush()
 		}
 	}
 }
